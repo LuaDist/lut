@@ -20,7 +20,8 @@ local current = nil
 --
 -- Full test file example:
 --
---   require 'lut'
+--   local lub    = require 'lub'
+--   local lut    = require 'lut'
 --   local should = lut.Test 'animal.Dog'
 --
 --   function should.bark()
@@ -159,6 +160,9 @@ end
 --
 --   -- Run all tests now.
 --   should:test()
+--
+-- WARN: Once tests are run, this function calls `os.exit` with a return code of 0
+-- (success) or -1 (failure).
 
 -- nodoc
 function lib:test(batch)
@@ -178,13 +182,17 @@ end
 -- Test all files in `list_or_path` matching `pattern`. Typical usage is to
 -- create an `all.lua` file in the tests folder with:
 --
---   require 'lut'
+--   local lub = require 'lub'
+--   local lut = require 'lut'
 --   lut.Test.files(lub.path '|')
 --
 -- This will run tests for all files matching the default pattern `%_test.lua$`.
 -- If the optional `reject` pattern is provided, paths matching this pattern
 -- will be, well, rejected. See [lub.path](lub.html#path) for details on the
 -- pipe syntax.
+--
+-- WARN: Once tests are run, this function calls `os.exit` with a return code of 0
+-- (success) or -1 (failure).
 function lib.files(list_or_path, pattern, reject)
   private.parseArgs()
   pattern = pattern or '%_test.lua$'
@@ -609,6 +617,8 @@ function private.report()
     end
   end
   print('')
+
+  os.exit(lib.total_fail == 0 and 0 or -1)
 end
 
 return lib
